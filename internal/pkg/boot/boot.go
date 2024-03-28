@@ -20,7 +20,7 @@ func NewServer(ctx context.Context) *http.Server {
 
 	//middlewares
 
-	mux.Methods(http.MethodGet).Path("/v1/tinify").HandlerFunc(controllers.Tinify)
+	mux.Methods(http.MethodPost).Path("/v1/tinify").HandlerFunc(controllers.Tinify)
 	mux.Methods(http.MethodGet).Path("/v1/redirect").HandlerFunc(controllers.Redirect)
 	mux.Methods(http.MethodGet).Path("/v1/metrics").HandlerFunc(controllers.Metrics)
 
