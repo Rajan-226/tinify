@@ -2,7 +2,10 @@ package boot
 
 import (
 	"context"
+	"github.com/myProjects/tinify/internal/app/apis/tinify"
 	"github.com/myProjects/tinify/internal/app/controllers"
+	"github.com/myProjects/tinify/models/domain_info"
+	"github.com/myProjects/tinify/models/url_info"
 	"net/http"
 
 	gmux "github.com/gorilla/mux"
@@ -10,6 +13,8 @@ import (
 
 func Init(ctx context.Context) {
 	server := NewServer(ctx)
+
+	initEntities()
 
 	server.ListenAndServe()
 
@@ -30,6 +35,13 @@ func NewServer(ctx context.Context) *http.Server {
 	}
 
 	return server
+}
+
+func initEntities() {
+	urlCore := url_info.NewCore(url_info.NewRepo())
+	domainCore := domain_info.NewCore(domain_info.NewRepo())
+
+	tinify.NewCore(urlCore, domainCore)
 }
 
 /*

@@ -9,6 +9,7 @@ import (
 )
 
 func Tinify(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error reading request body: %s", err.Error()), http.StatusBadRequest)
@@ -28,7 +29,7 @@ func Tinify(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tinifiedURL, err := tinify.Process(url)
+	tinifiedURL, err := tinify.Process(ctx, url, tinify.GetCore())
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Unable to process request: %s", err.Error()), http.StatusInternalServerError)
 		return

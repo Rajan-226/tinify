@@ -3,10 +3,14 @@ package domain_info
 type ICore interface {
 }
 
-type core struct{}
+type core struct {
+	IRepo
+}
 
-func NewCore() ICore {
-	return &core{}
+func NewCore(repo IRepo) ICore {
+	return &core{
+		repo,
+	}
 }
 
 func (c *core) NewEntity() {
