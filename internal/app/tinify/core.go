@@ -2,11 +2,13 @@ package tinify
 
 import (
 	"context"
+	"github.com/myProjects/tinify/internal/pkg/utils"
+	"github.com/redis/go-redis/v9"
+	"sync"
+
 	"github.com/myProjects/tinify/internal/pkg/constants"
 	"github.com/myProjects/tinify/internal/pkg/zookeeper"
-	"github.com/myProjects/tinify/models/domain_info"
 	"github.com/myProjects/tinify/models/url_info"
-	"sync"
 )
 
 var (
@@ -18,20 +20,20 @@ type ICore interface {
 	GetShortened(context context.Context, url string) (string, error)
 	GetLongURL(context context.Context, url string) (string, error)
 	Tinify(context context.Context, url string, shorten strategy) (string, error)
-	CreateAnalytics(context context.Context, url string) error
+	Analytics(context context.Context, url string) error
 }
 
 type core struct {
-	urlCore    url_info.ICore
-	domainCore domain_info.ICore
+	urlCore url_info.ICore
+	redis   redis.UniversalClient
 }
 
-func NewCore(urlCore url_info.ICore, domainCore domain_info.ICore) {
+func NewCore(urlCore url_info.ICore, client redis.UniversalClient) {
 	once.Do(
 		func() {
 			c = &core{
-				urlCore:    urlCore,
-				domainCore: domainCore,
+				urlCore: urlCore,
+				redis:   client,
 			}
 		},
 	)
@@ -65,7 +67,14 @@ func (c *core) Tinify(ctx context.Context, url string, shorten strategy) (string
 	return constants.TinifyPrefixURL + shortenedURI, nil
 }
 
-func (c *core) CreateAnalytics(ctx context.Context, url string) error {
+func (c *core) Analytics(ctx context.Context, url string) error {
+	domain, _, err := utils.SplitURL(url)
+	if err != nil {
+		return err
+	}
+
+	c.redis.Incr(ctx, domain)
+
 	return nil
 }
 

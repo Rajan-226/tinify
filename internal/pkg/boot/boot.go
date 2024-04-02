@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/myProjects/tinify/internal/app/controllers"
 	"github.com/myProjects/tinify/internal/app/tinify"
-	"github.com/myProjects/tinify/models/domain_info"
 	"github.com/myProjects/tinify/models/url_info"
+	redis "github.com/redis/go-redis/v9"
 	"net/http"
 
 	gmux "github.com/gorilla/mux"
@@ -39,47 +39,11 @@ func NewServer(ctx context.Context) *http.Server {
 
 func initEntities() {
 	urlCore := url_info.NewCore(url_info.NewRepo())
-	domainCore := domain_info.NewCore(domain_info.NewRepo())
 
-	tinify.NewCore(urlCore, domainCore)
+	client := redis.NewClient(&redis.Options{
+		Addr: "localhost:6379",
+		DB:   0,
+	})
+
+	tinify.NewCore(urlCore, client)
 }
-
-/*
-tinify url API (strategy, url_info db core)
-	-> url shortening logic
-	-> db entity creation
-redirection API (db core)
-	-> fetch from core
-metrics API ()
-
-
-
-->handlers/
-	tinify_api.go -> tinify_processor.go
-
-
-/processors
-
-controllers
-	tinify.go
-	redirection.go
-	metrics.go
-
-api/
-	tinify
-		GetServer()
-		NewServer(NewProcessor(NewCore()))
-		server.go -> validations
-
-
-		processor.go ->
-
-	redirection
-
-
-	metrics
-
-
-
-
-*/

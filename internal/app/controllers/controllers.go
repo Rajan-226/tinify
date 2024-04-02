@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/myProjects/tinify/internal/app/tinify"
+	"github.com/myProjects/tinify/internal/pkg/utils"
 	"io"
 	"net/http"
 )
@@ -30,6 +31,11 @@ func Tinify(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !utils.IsValidURL(url) {
+		http.Error(w, "URL is invalid", http.StatusBadRequest)
+		return
+	}
+
 	tinifiedURL, err := tinify.Create(ctx, url, tinify.GetCore())
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Unable to process request: %s", err.Error()), http.StatusInternalServerError)
@@ -45,7 +51,7 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	shortURI := vars["path"]
 	if shortURI == "" {
-		http.Error(w, "URL is missing or invalid", http.StatusBadRequest)
+		http.Error(w, "Invalid short url", http.StatusBadRequest)
 		return
 	}
 

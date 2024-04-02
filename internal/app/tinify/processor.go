@@ -24,7 +24,7 @@ func Create(ctx context.Context, url string, core ICore) (string, error) {
 		shortURL, err = core.Tinify(ctx, url, Base62Strategy)
 	}()
 
-	analyticsError := core.CreateAnalytics(ctx, url)
+	analyticsError := core.Analytics(ctx, url)
 
 	wg.Wait()
 
