@@ -2,8 +2,8 @@ package boot
 
 import (
 	"context"
-	"github.com/myProjects/tinify/internal/app/apis/tinify"
 	"github.com/myProjects/tinify/internal/app/controllers"
+	"github.com/myProjects/tinify/internal/app/tinify"
 	"github.com/myProjects/tinify/models/domain_info"
 	"github.com/myProjects/tinify/models/url_info"
 	"net/http"
@@ -26,12 +26,12 @@ func NewServer(ctx context.Context) *http.Server {
 	//middlewares
 
 	mux.Methods(http.MethodPost).Path("/v1/tinify").HandlerFunc(controllers.Tinify)
-	mux.Methods(http.MethodGet).Path("/v1/redirect").HandlerFunc(controllers.Redirect)
 	mux.Methods(http.MethodGet).Path("/v1/metrics").HandlerFunc(controllers.Metrics)
+	mux.Methods(http.MethodGet).Path("/v1/{path}").HandlerFunc(controllers.Redirect)
 
 	server := &http.Server{
 		Handler: mux,
-		Addr:    "0.0.0.0:8080",
+		Addr:    ":8080",
 	}
 
 	return server

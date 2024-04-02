@@ -13,3 +13,7 @@ type UrlInfo struct {
 func (u *UrlInfo) GetShortenedURL() string {
 	return constants.TinifyPrefixURL + u.ShortURI
 }
+
+func (u *UrlInfo) GetLongURL() string {
+	return u.LongURL
+}

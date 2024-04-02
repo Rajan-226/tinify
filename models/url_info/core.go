@@ -31,6 +31,7 @@ func (c *core) NewEntity(ctx context.Context, longURL string, shortURI string) e
 	}
 
 	c.repo.Create(ctx, longURL, entity)
+	c.repo.Create(ctx, shortURI, entity)
 
 	return nil
 }

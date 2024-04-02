@@ -3,7 +3,8 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/myProjects/tinify/internal/app/apis/tinify"
+	"github.com/gorilla/mux"
+	"github.com/myProjects/tinify/internal/app/tinify"
 	"io"
 	"net/http"
 )
@@ -29,7 +30,7 @@ func Tinify(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tinifiedURL, err := tinify.Process(ctx, url, tinify.GetCore())
+	tinifiedURL, err := tinify.Create(ctx, url, tinify.GetCore())
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Unable to process request: %s", err.Error()), http.StatusInternalServerError)
 		return
@@ -40,7 +41,21 @@ func Tinify(w http.ResponseWriter, r *http.Request) {
 }
 
 func Redirect(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("redirect")
+	ctx := r.Context()
+	vars := mux.Vars(r)
+	shortURI := vars["path"]
+	if shortURI == "" {
+		http.Error(w, "URL is missing or invalid", http.StatusBadRequest)
+		return
+	}
+
+	longURL, err := tinify.Redirect(ctx, shortURI, tinify.GetCore())
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Unable to process request: %s", err.Error()), http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, longURL, http.StatusFound)
 }
 
 func Metrics(w http.ResponseWriter, r *http.Request) {

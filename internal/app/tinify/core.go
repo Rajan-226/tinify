@@ -16,8 +16,9 @@ var (
 
 type ICore interface {
 	GetShortened(context context.Context, url string) (string, error)
-	tinify(context context.Context, url string, shorten strategy) (string, error)
-	analytics(context context.Context, url string) error
+	GetLongURL(context context.Context, url string) (string, error)
+	Tinify(context context.Context, url string, shorten strategy) (string, error)
+	CreateAnalytics(context context.Context, url string) error
 }
 
 type core struct {
@@ -45,7 +46,16 @@ func (c *core) GetShortened(ctx context.Context, url string) (string, error) {
 	return urlInfo.GetShortenedURL(), nil
 }
 
-func (c *core) tinify(ctx context.Context, url string, shorten strategy) (string, error) {
+func (c *core) GetLongURL(ctx context.Context, url string) (string, error) {
+	urlInfo, err := c.urlCore.Fetch(ctx, url)
+	if err != nil {
+		return "", err
+	}
+
+	return urlInfo.GetLongURL(), nil
+}
+
+func (c *core) Tinify(ctx context.Context, url string, shorten strategy) (string, error) {
 	shortenedURI := shorten(zookeeper.GetCounter())
 
 	if err := c.urlCore.NewEntity(ctx, url, shortenedURI); err != nil {
@@ -55,7 +65,7 @@ func (c *core) tinify(ctx context.Context, url string, shorten strategy) (string
 	return constants.TinifyPrefixURL + shortenedURI, nil
 }
 
-func (c *core) analytics(ctx context.Context, url string) error {
+func (c *core) CreateAnalytics(ctx context.Context, url string) error {
 	return nil
 }
 
