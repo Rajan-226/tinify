@@ -65,5 +65,24 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 }
 
 func Metrics(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("metrics")
+	ctx := r.Context()
+
+	topDomains, err := tinify.GetCore().GetTopShortenedDomains(ctx, 3)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Failed to retrieve metrics: %s", err.Error()), http.StatusInternalServerError)
+		return
+	}
+
+	jsonData, err := json.Marshal(topDomains)
+	if err != nil {
+		http.Error(w, "Failed to encode metrics", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+
+	_, err = w.Write(jsonData)
+	if err != nil {
+		fmt.Println("Failed to write response:", err)
+	}
 }

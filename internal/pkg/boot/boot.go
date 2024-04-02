@@ -2,25 +2,22 @@ package boot
 
 import (
 	"context"
+	"fmt"
+	gmux "github.com/gorilla/mux"
 	"github.com/myProjects/tinify/internal/app/controllers"
 	"github.com/myProjects/tinify/internal/app/tinify"
 	"github.com/myProjects/tinify/models/url_info"
 	redis "github.com/redis/go-redis/v9"
 	"net/http"
-
-	gmux "github.com/gorilla/mux"
 )
 
 func Init(ctx context.Context) {
-	server := NewServer(ctx)
-
-	initEntities()
-
-	server.ListenAndServe()
-
+	redisClient := initRedis(ctx)
+	initEntities(redisClient)
+	initServer(ctx)
 }
 
-func NewServer(ctx context.Context) *http.Server {
+func initServer(ctx context.Context) {
 	mux := gmux.NewRouter()
 
 	//middlewares
@@ -34,16 +31,25 @@ func NewServer(ctx context.Context) *http.Server {
 		Addr:    ":8080",
 	}
 
-	return server
+	server.ListenAndServe()
 }
 
-func initEntities() {
+func initEntities(redisClient redis.UniversalClient) {
 	urlCore := url_info.NewCore(url_info.NewRepo())
 
+	tinify.NewCore(urlCore, redisClient)
+}
+
+func initRedis(ctx context.Context) redis.UniversalClient {
 	client := redis.NewClient(&redis.Options{
 		Addr: "localhost:6379",
-		DB:   0,
+		DB:   2,
 	})
 
-	tinify.NewCore(urlCore, client)
+	_, err := client.Ping(context.Background()).Result()
+	if err != nil {
+		panic(fmt.Errorf("error while pinging redis : %w", err))
+	}
+
+	return client
 }

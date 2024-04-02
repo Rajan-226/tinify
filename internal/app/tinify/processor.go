@@ -8,7 +8,7 @@ import (
 )
 
 func Create(ctx context.Context, url string, core ICore) (string, error) {
-	if shortURL, err := core.GetShortened(ctx, url); shortURL != "" {
+	if shortURL, err := core.GetShortenedURLIfExists(ctx, url); shortURL != "" {
 		return shortURL, nil
 	} else if err != nil && err.Error() != constants.NotFound {
 		return "", err
@@ -45,4 +45,8 @@ func Redirect(ctx context.Context, url string, core ICore) (string, error) {
 	}
 
 	return "", errors.New(constants.NotFound)
+}
+
+func Metrics(ctx context.Context, core ICore) (map[string]int, error) {
+	return core.GetTopShortenedDomains(ctx, 3)
 }

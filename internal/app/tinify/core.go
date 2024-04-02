@@ -2,6 +2,7 @@ package tinify
 
 import (
 	"context"
+	"fmt"
 	"github.com/myProjects/tinify/internal/pkg/utils"
 	"github.com/redis/go-redis/v9"
 	"sync"
@@ -17,10 +18,11 @@ var (
 )
 
 type ICore interface {
-	GetShortened(context context.Context, url string) (string, error)
+	GetShortenedURLIfExists(context context.Context, url string) (string, error)
 	GetLongURL(context context.Context, url string) (string, error)
 	Tinify(context context.Context, url string, shorten strategy) (string, error)
 	Analytics(context context.Context, url string) error
+	GetTopShortenedDomains(ctx context.Context, count int64) (map[string]int, error)
 }
 
 type core struct {
@@ -39,7 +41,7 @@ func NewCore(urlCore url_info.ICore, client redis.UniversalClient) {
 	)
 }
 
-func (c *core) GetShortened(ctx context.Context, url string) (string, error) {
+func (c *core) GetShortenedURLIfExists(ctx context.Context, url string) (string, error) {
 	urlInfo, err := c.urlCore.Fetch(ctx, url)
 	if err != nil {
 		return "", err
@@ -72,10 +74,36 @@ func (c *core) Analytics(ctx context.Context, url string) error {
 	if err != nil {
 		return err
 	}
-
-	c.redis.Incr(ctx, domain)
+	_, err = c.redis.ZIncrBy(ctx, "domains", 1, domain).Result()
+	if err != nil {
+		return fmt.Errorf("failed to increment domain count: %w", err)
+	}
 
 	return nil
+}
+
+func (c *core) GetTopShortenedDomains(ctx context.Context, count int64) (map[string]int, error) {
+	domains, err := c.redis.ZRevRangeByScore(ctx, "domains", &redis.ZRangeBy{
+		Min:    "-inf",
+		Max:    "+inf",
+		Offset: 0,
+		Count:  count,
+	}).Result()
+
+	if err != nil {
+		return nil, fmt.Errorf("error retrieving top domains: %w", err)
+	}
+
+	topDomains := make(map[string]int)
+	for _, domain := range domains {
+		cnt, err := c.redis.ZScore(ctx, "domains", domain).Result()
+		if err != nil {
+			return nil, fmt.Errorf("error retrieving count for domain %s: %w", domain, err)
+		}
+		topDomains[domain] = int(cnt)
+	}
+
+	return topDomains, nil
 }
 
 func GetCore() ICore {
