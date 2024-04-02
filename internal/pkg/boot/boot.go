@@ -43,7 +43,7 @@ func initEntities(redisClient redis.UniversalClient) {
 func initRedis(ctx context.Context) redis.UniversalClient {
 	client := redis.NewClient(&redis.Options{
 		Addr: "localhost:6379",
-		DB:   2,
+		DB:   0,
 	})
 
 	_, err := client.Ping(context.Background()).Result()
