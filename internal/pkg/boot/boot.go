@@ -23,6 +23,7 @@ func initServer(ctx context.Context) {
 	//middlewares
 
 	mux.Methods(http.MethodPost).Path("/v1/tinify").HandlerFunc(controllers.Tinify)
+	mux.Methods(http.MethodGet).Path("/v1/getURLs").HandlerFunc(controllers.GetAllURLs)
 	mux.Methods(http.MethodGet).Path("/v1/metrics").HandlerFunc(controllers.Metrics)
 	mux.Methods(http.MethodGet).Path("/v1/{path}").HandlerFunc(controllers.Redirect)
 

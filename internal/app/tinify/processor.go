@@ -37,6 +37,10 @@ func Create(ctx context.Context, url string, core ICore) (string, error) {
 	return shortURL, nil
 }
 
+func GetAllUrls(ctx context.Context, core ICore) (map[string]string, error) {
+	return core.GetAllURLs(ctx)
+}
+
 func Redirect(ctx context.Context, url string, core ICore) (string, error) {
 	if longURL, err := core.GetLongURL(ctx, url); longURL != "" {
 		return longURL, nil

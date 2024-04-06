@@ -2,12 +2,15 @@ package url_info
 
 import (
 	"context"
+	"errors"
+	"github.com/myProjects/tinify/internal/pkg/utils"
 	"time"
 )
 
 type ICore interface {
 	NewEntity(ctx context.Context, url string, shortURI string) error
 	Fetch(ctx context.Context, longURL string) (*UrlInfo, error)
+	FetchAll(ctx context.Context) (map[string]string, error)
 }
 
 type core struct {
@@ -34,6 +37,23 @@ func (c *core) NewEntity(ctx context.Context, longURL string, shortURI string) e
 	c.repo.Create(ctx, shortURI, entity)
 
 	return nil
+}
+
+func (c *core) FetchAll(ctx context.Context) (map[string]string, error) {
+	entities := c.repo.FetchAll(ctx)
+
+	longToShortURL := make(map[string]string)
+	for key, value := range entities {
+		if value == nil {
+			return nil, errors.New("not a valid scenario")
+		}
+
+		if utils.IsValidURL(key) {
+			longToShortURL[key] = value.ShortURI
+		}
+	}
+
+	return longToShortURL, nil
 }
 
 func (c *core) Fetch(ctx context.Context, longURL string) (*UrlInfo, error) {

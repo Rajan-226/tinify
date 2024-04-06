@@ -20,6 +20,7 @@ var (
 type ICore interface {
 	GetShortenedURLIfExists(context context.Context, url string) (string, error)
 	GetLongURL(context context.Context, url string) (string, error)
+	GetAllURLs(context context.Context) (map[string]string, error)
 	Tinify(context context.Context, url string, shorten strategy) (string, error)
 	Analytics(context context.Context, url string) error
 	GetTopShortenedDomains(ctx context.Context, count int64) (map[string]int, error)
@@ -48,6 +49,10 @@ func (c *core) GetShortenedURLIfExists(ctx context.Context, url string) (string,
 	}
 
 	return urlInfo.GetShortenedURL(), nil
+}
+
+func (c *core) GetAllURLs(ctx context.Context) (map[string]string, error) {
+	return c.urlCore.FetchAll(ctx)
 }
 
 func (c *core) GetLongURL(ctx context.Context, url string) (string, error) {

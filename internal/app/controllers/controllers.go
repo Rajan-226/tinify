@@ -46,6 +46,26 @@ func Tinify(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func GetAllURLs(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	longToShortURL, err := tinify.GetAllUrls(ctx, tinify.GetCore())
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Unable to process request: %s", err.Error()), http.StatusInternalServerError)
+		return
+	}
+
+	jsonData, err := json.Marshal(longToShortURL)
+	if err != nil {
+		http.Error(w, "Failed to marshal longToShortURL map", http.StatusInternalServerError)
+		return
+	}
+
+	w.Write(jsonData)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+}
+
 func Redirect(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	vars := mux.Vars(r)

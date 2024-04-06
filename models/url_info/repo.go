@@ -9,6 +9,7 @@ import (
 type IRepo interface {
 	Create(ctx context.Context, key string, info *UrlInfo)
 	Fetch(ctx context.Context, key string) (*UrlInfo, error)
+	FetchAll(ctx context.Context) map[string]*UrlInfo
 }
 
 type repo struct {
@@ -37,4 +38,8 @@ func (r *repo) Fetch(ctx context.Context, key string) (*UrlInfo, error) {
 	}
 
 	return value, nil
+}
+
+func (r *repo) FetchAll(ctx context.Context) map[string]*UrlInfo {
+	return r.DB
 }
