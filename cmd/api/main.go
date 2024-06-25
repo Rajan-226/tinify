@@ -2,7 +2,8 @@ package main
 
 import (
 	"context"
-	"github.com/myProjects/tinify/internal/pkg/boot"
+
+	"github.com/Rajan-226/tinify/internal/pkg/boot"
 )
 
 func main() {

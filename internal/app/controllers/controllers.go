@@ -3,11 +3,12 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
-	"github.com/myProjects/tinify/internal/app/tinify"
-	"github.com/myProjects/tinify/internal/pkg/utils"
 	"io"
 	"net/http"
+
+	"github.com/Rajan-226/tinify/internal/app/tinify"
+	"github.com/Rajan-226/tinify/internal/pkg/utils"
+	"github.com/gorilla/mux"
 )
 
 func Tinify(w http.ResponseWriter, r *http.Request) {

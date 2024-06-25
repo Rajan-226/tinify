@@ -3,7 +3,8 @@ package url_info
 import (
 	"context"
 	"errors"
-	"github.com/myProjects/tinify/internal/pkg/constants"
+
+	"github.com/Rajan-226/tinify/internal/pkg/constants"
 )
 
 type IRepo interface {

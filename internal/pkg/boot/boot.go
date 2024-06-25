@@ -3,12 +3,13 @@ package boot
 import (
 	"context"
 	"fmt"
-	gmux "github.com/gorilla/mux"
-	"github.com/myProjects/tinify/internal/app/controllers"
-	"github.com/myProjects/tinify/internal/app/tinify"
-	"github.com/myProjects/tinify/models/url_info"
-	redis "github.com/redis/go-redis/v9"
 	"net/http"
+
+	"github.com/Rajan-226/tinify/internal/app/controllers"
+	"github.com/Rajan-226/tinify/internal/app/tinify"
+	"github.com/Rajan-226/tinify/models/url_info"
+	gmux "github.com/gorilla/mux"
+	redis "github.com/redis/go-redis/v9"
 )
 
 func Init(ctx context.Context) {

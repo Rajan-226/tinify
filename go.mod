@@ -1,4 +1,4 @@
-module github.com/myProjects/tinify
+module github.com/Rajan-226/tinify
 
 go 1.21.0
 

@@ -3,13 +3,14 @@ package tinify
 import (
 	"context"
 	"fmt"
-	"github.com/myProjects/tinify/internal/pkg/utils"
-	"github.com/redis/go-redis/v9"
 	"sync"
 
-	"github.com/myProjects/tinify/internal/pkg/constants"
-	"github.com/myProjects/tinify/internal/pkg/zookeeper"
-	"github.com/myProjects/tinify/models/url_info"
+	"github.com/Rajan-226/tinify/internal/pkg/utils"
+	"github.com/redis/go-redis/v9"
+
+	"github.com/Rajan-226/tinify/internal/pkg/constants"
+	"github.com/Rajan-226/tinify/internal/pkg/zookeeper"
+	"github.com/Rajan-226/tinify/models/url_info"
 )
 
 var (

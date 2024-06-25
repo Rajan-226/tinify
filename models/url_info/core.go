@@ -3,8 +3,9 @@ package url_info
 import (
 	"context"
 	"errors"
-	"github.com/myProjects/tinify/internal/pkg/utils"
 	"time"
+
+	"github.com/Rajan-226/tinify/internal/pkg/utils"
 )
 
 type ICore interface {

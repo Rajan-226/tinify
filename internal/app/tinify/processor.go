@@ -3,8 +3,9 @@ package tinify
 import (
 	"context"
 	"errors"
-	"github.com/myProjects/tinify/internal/pkg/constants"
 	"sync"
+
+	"github.com/Rajan-226/tinify/internal/pkg/constants"
 )
 
 func Create(ctx context.Context, url string, core ICore) (string, error) {

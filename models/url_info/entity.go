@@ -1,6 +1,6 @@
 package url_info
 
-import "github.com/myProjects/tinify/internal/pkg/constants"
+import "github.com/Rajan-226/tinify/internal/pkg/constants"
 
 type UrlInfo struct {
 	LongURL    string

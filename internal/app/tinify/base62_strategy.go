@@ -1,7 +1,7 @@
 package tinify
 
 import (
-	"github.com/myProjects/tinify/internal/pkg/constants"
+	"github.com/Rajan-226/tinify/internal/pkg/constants"
 )
 
 type strategy func(counter int64) string
